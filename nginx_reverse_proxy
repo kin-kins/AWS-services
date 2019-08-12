@@ -3,21 +3,21 @@ worker_processes auto;
 error_log /var/log/nginx/error.log;
 pid /var/run/nginx.pid;
 
- # Load dynamic modules. See /usr/share/nginx/README.fedora.
+# Load dynamic modules. See /usr/share/nginx/README.fedora.
 include /usr/share/nginx/modules/*.conf;
 
- events {
+events {
     worker_connections 1024;
 }
 
- http {
+http {
     log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
                       '$status $body_bytes_sent "$http_referer" '
                       '"$http_user_agent" "$http_x_forwarded_for"';
 
-     access_log  /var/log/nginx/access.log  main;
+    access_log  /var/log/nginx/access.log  main;
 
-     sendfile            on;
+    sendfile            on;
     tcp_nopush          on;
     tcp_nodelay         on;
     keepalive_timeout   65;
@@ -25,52 +25,52 @@ include /usr/share/nginx/modules/*.conf;
     include             /etc/nginx/mime.types;
     default_type        application/octet-stream;
 
-     # Load modular configuration files from the /etc/nginx/conf.d directory.
+    # Load modular configuration files from the /etc/nginx/conf.d directory.
     include /etc/nginx/conf.d/*.conf;
 
-     server {
+    server {
       listen 80 default_server;
       listen [::]:80 default_server ipv6only=on;
       server_name _;
 
-       # Comment out the following two lines if you do not want to enable HTTP Basic Authentication
+      # Comment out the following two lines if you do not want to enable HTTP Basic Authentication
       auth_basic "Restricted Access";
       auth_basic_user_file /etc/nginx/conf.d/.htpasswd;
-       location / {
+
+     location / {
         # Set Host to match ES endpoint
         proxy_set_header Host vpc-ngelasti-qmazoh6hzvpxiludpnzasoi2nu.us-east-1.es.amazonaws.com;
 
-         # We want to be sure that we are sending instance IP instead of browser's IP
+        # We want to be sure that we are sending instance IP instead of browser's IP
         proxy_set_header X-Real-IP 3.226.189.187;
 
-         # Various headers
+        # Various headers
         proxy_http_version 1.1;
         proxy_set_header Connection "Keep-Alive";
         proxy_set_header Proxy-Connection "Keep-Alive";
         proxy_set_header Authorization "";
 
-         # Forward requests to ES, please use https
+        # Forward requests to ES, please use https
         proxy_pass https://vpc-ngelasti-qmazoh6hzvpxiludpnzasoi2nu.us-east-1.es.amazonaws.com;
       }
 
-
-       location /kibana {
+        location /kibana {
         # Set Host to match ES endpoint
         proxy_set_header Host vpc-ngelasti-qmazoh6hzvpxiludpnzasoi2nu.us-east-1.es.amazonaws.com;
         # We want to be sure that we are sending instance IP instead of browser's IP
         proxy_set_header X-Real-IP 3.226.189.187;
         # Various headers
 
-         proxy_http_version 1.1;
+        proxy_http_version 1.1;
         proxy_set_header Connection "Keep-Alive";
         proxy_set_header Proxy-Connection "Keep-Alive";
         proxy_set_header Authorization "";
 
-         # Forward requests to Kibana, please use https and /_plugin/kibana/
+        # Forward requests to Kibana, please use https and /_plugin/kibana/
         proxy_pass https://vpc-ngelasti-qmazoh6hzvpxiludpnzasoi2nu.us-east-1.es.amazonaws.com/_plugin/kibana/;
 
-         # Ensure that requests are coming back to /kibana/
-        proxy_redirect https://vpc-ngelasti-qmazoh6hzvpxiludpnzasoi2nu.us-east-1.es.amazonaws.com/_plugin/kibana/ http://3.226.189.187/kibana
+        # Ensure that requests are coming back to /kibana/
+        proxy_redirect https://vpc-ngelasti-qmazoh6hzvpxiludpnzasoi2nu.us-east-1.es.amazonaws.com/_plugin/kibana/ http://3.226.189.187/kibana/;
       }
     }
 }
