@@ -76,7 +76,7 @@ def cleanOutDir(outDir):
     os.mkdir(outDir)
 
 # S3 Bucket upload function
-def upload_to_s3(file,thing_id,stream):
+def upload_to_Kinesis(file,thing_id,stream):
 
 
     try:
@@ -106,13 +106,13 @@ def upload_to_s3(file,thing_id,stream):
     return False
 
 # Async method to upload to s3 and delete image on local file system
-def asyncS3Upload(directory, filename):
+def asynckinesis(directory, filename):
 
     file = open(os.path.join(directory, filename), 'rb')
     key = file.name
     thing_id="try"
     stream=base64.b64encode(file.read())
-    if upload_to_s3(file,thing_id,stream):
+    if upload_to_Kinesis(file,thing_id,stream):
         print ('Uploaded   ' + filename)
         os.remove(os.path.join(directory, filename))
         # update_elastic(directory, filename)
@@ -151,7 +151,7 @@ def URLRequest():
                     cv2.imwrite(os.path.join(directory, filename), image)
                     print ('Created   ' + filename)
 
-                    Thread(target=asyncS3Upload, args=(directory, filename,)).start() 
+                    Thread(target=asyncKinesis, args=(directory, filename,)).start() 
 
             else:
                 # Failure handing and release existing cap
