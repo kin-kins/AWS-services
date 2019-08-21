@@ -151,7 +151,7 @@ def URLRequest():
                     cv2.imwrite(os.path.join(directory, filename), image)
                     print ('Created   ' + filename)
 
-                    Thread(target=asyncS3Upload, args=(directory, filename,)).start()
+                    Thread(target=asyncS3Upload, args=(directory, filename,)).start() 
 
             else:
                 # Failure handing and release existing cap
