@@ -9,7 +9,7 @@ from threading import Thread
 import threading
 from elasticsearch import Elasticsearch
 import base64
-import json
+import json 
 
 my_stream_name = 'later'
 AWS_ACCESS_KEY = os.environ.get('AWS_ACCESS_KEY', "")
